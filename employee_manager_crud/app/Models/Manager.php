@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Manager extends Model
+class Manager extends Authenticatable
 {
     protected $fillable = [
         'name',
@@ -14,6 +15,8 @@ class Manager extends Model
         'department',
         'position',
         'team_size',
+        'email',
+        'password',
     ];
 
     public function employees()

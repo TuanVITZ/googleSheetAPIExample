@@ -12,7 +12,8 @@ class ManagerController extends Controller
      */
     public function index()
     {
-        //
+        $managers = Manager::with('employees')->get();
+        return view('managers.index', compact('managers'));
     }
 
     /**
@@ -20,7 +21,7 @@ class ManagerController extends Controller
      */
     public function create()
     {
-        //
+        return view('managers.create');
     }
 
     /**
@@ -28,7 +29,21 @@ class ManagerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required',
+            'start_work_date' => 'required|date',
+            'department' => 'required',
+            'position' => 'nullable',
+            'team_size' => 'nullable|integer',
+            'email' => 'required|email|unique:managers,email',
+            'password' => 'required|min:6',
+        ]);
+        $data = $request->all();
+        $data['password'] = \Hash::make($data['password']);
+        Manager::create($data);
+        return redirect()->route('managers.index')->with('success', 'Manager created successfully.');
     }
 
     /**
@@ -44,7 +59,7 @@ class ManagerController extends Controller
      */
     public function edit(Manager $manager)
     {
-        //
+        return view('managers.edit', compact('manager'));
     }
 
     /**
@@ -52,7 +67,25 @@ class ManagerController extends Controller
      */
     public function update(Request $request, Manager $manager)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required',
+            'start_work_date' => 'required|date',
+            'department' => 'required',
+            'position' => 'nullable',
+            'team_size' => 'nullable|integer',
+            'email' => 'required|email|unique:managers,email,' . $manager->id,
+            'password' => 'nullable|min:6',
+        ]);
+        $data = $request->all();
+        if (!empty($data['password'])) {
+            $data['password'] = \Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+        $manager->update($data);
+        return redirect()->route('managers.index')->with('success', 'Manager updated successfully.');
     }
 
     /**
@@ -60,6 +93,7 @@ class ManagerController extends Controller
      */
     public function destroy(Manager $manager)
     {
-        //
+        $manager->delete();
+        return redirect()->route('managers.index')->with('success', 'Manager deleted successfully.');
     }
 }

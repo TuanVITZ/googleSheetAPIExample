@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('department');
             $table->string('position')->nullable();
             $table->integer('team_size')->nullable();
+            $table->string('email')->unique();
+            $table->string('password');
+            $table->rememberToken();
             $table->timestamps();
         });
     }
